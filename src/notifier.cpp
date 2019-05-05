@@ -19,7 +19,8 @@
 #define TFT_DC     17
 #define TFT_SCLK 5   // set these to be whatever pins you like!
 #define TFT_MOSI 23   // set these to be whatever pins you like!
-Display tft = Display(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
+Display dis = Display(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
+Display *tft=&dis;
 
 
 // BLE UUIDs
@@ -51,8 +52,8 @@ char* time_buffer = new char[BUFF_LEN];
 volatile int batt_level = 0; // 
 volatile int display_orientation = 0; //0=none;1=flip
 
-Notification dNotification;
-//dNotification.setDisplay(tft);
+Notification* dNotification = new Notification(tft);
+//dNotification->setDisplay(tft);
 
 #define SCROLL_DELAY 6
 #define MAX_SCROLL_WINDOW_HEIGHT 160
@@ -63,8 +64,8 @@ class NotificationCodeCallback: public BLECharacteristicCallbacks {
     std::string str = pTimeCharacteristic->getValue(); //read values
     memset(payload, '\0', sizeof(time_buffer)); //clear buffer
     strcpy(payload, str.c_str());
-    dNotification.setCode(atoi(payload));
-    //tft.writeText(payload);
+    dNotification->setCode(atoi(payload));
+    //tft->writeText(payload);
   }
 };
 //Callback to handle title Charcterisitc events
@@ -73,10 +74,10 @@ class NotificationTitleCallback: public BLECharacteristicCallbacks {
     std::string str = pCharacteristic->getValue(); //read values
     memset(payload, '\0', sizeof(payload));
     strcpy(payload, str.c_str());
-    dNotification.setTitle(payload);
-    tft.fillRect(0,20,128,20,ST7735_BLACK);
-    tft.writeText(payload,20);
-    //tft.writeText(payload);
+    dNotification->setTitle(payload);
+    tft->fillRect(0,20,128,20,ST7735_BLACK);
+    tft->writeText(payload,20);
+    //tft->writeText(payload);
   }
 };
 //Callback to handle conversation title Charcterisitc events
@@ -85,10 +86,10 @@ class NotificationConverTitleCallback: public BLECharacteristicCallbacks {
     std::string str = pCharacteristic->getValue(); //read values
     memset(payload, '\0', sizeof(payload));
     strcpy(payload, str.c_str());
-    dNotification.setConversationTitle(payload);
-    tft.fillRect(0,40,128,20,ST7735_BLACK);
-    tft.writeText(payload,40);
-    //tft.writeText(payload);
+    dNotification->setConversationTitle(payload);
+    tft->fillRect(0,40,128,20,ST7735_BLACK);
+    tft->writeText(payload,40);
+    //tft->writeText(payload);
   }
 };
 //Callback to handle conversation sub text Charcterisitc events
@@ -97,10 +98,10 @@ class NotificationSubTextCallback: public BLECharacteristicCallbacks {
     std::string str = pCharacteristic->getValue(); //read values
     memset(payload, '\0', sizeof(payload));
     strcpy(payload, str.c_str());
-    dNotification.setSubText(payload);
-    tft.fillRect(0,60,128,20,ST7735_BLACK);
-    tft.writeText(payload,60);
-    //tft.writeText(payload);
+    dNotification->setSubText(payload);
+    tft->fillRect(0,60,128,20,ST7735_BLACK);
+    tft->writeText(payload,60);
+    //tft->writeText(payload);
   }
 };
 //Callback to handle text Charcterisitc events
@@ -109,10 +110,10 @@ class NotificationTextCallback: public BLECharacteristicCallbacks {
     std::string str = pCharacteristic->getValue(); //read values
     memset(payload, '\0', sizeof(payload));
     strcpy(payload, str.c_str());
-    dNotification.setText(payload);
-    tft.fillRect(0,80,128,20,ST7735_BLACK);
-    tft.writeText(payload,80);
-    //tft.writeText(payload);
+    dNotification->setText(payload);
+    tft->fillRect(0,80,128,20,ST7735_BLACK);
+    tft->writeText(payload,80);
+    //tft->writeText(payload);
   }
 };
 //Callback to handle self display name Charcterisitc events
@@ -121,10 +122,10 @@ class NotificationSelfDisplayNameCallback: public BLECharacteristicCallbacks {
     std::string str = pCharacteristic->getValue(); //read values
     memset(payload, '\0', sizeof(payload));
     strcpy(payload, str.c_str());
-    dNotification.setSelfDisplayName(payload);
-    tft.fillRect(0,100,128,20,ST7735_BLACK);
-    tft.writeText(payload,100);
-    //tft.writeText(payload);
+    dNotification->setSelfDisplayName(payload);
+    tft->fillRect(0,100,128,20,ST7735_BLACK);
+    tft->writeText(payload,100);
+    //tft->writeText(payload);
   }
 };
 //Callback to handle info text Charcterisitc events
@@ -133,11 +134,11 @@ class NotificationInfoTextCallback: public BLECharacteristicCallbacks {
     std::string str = pCharacteristic->getValue(); //read values
     memset(payload, '\0', sizeof(payload));
     strcpy(payload, str.c_str());
-    dNotification.setInfoText(payload);
-    tft.fillRect(0,120,128,20,ST7735_BLACK);
-    tft.writeText(payload,120);
-    dNotification.processNotification();
-    //tft.writeText(payload);
+    dNotification->setInfoText(payload);
+    tft->fillRect(0,120,128,20,ST7735_BLACK);
+    tft->writeText(payload,120);
+    dNotification->processNotification();
+    //tft->writeText(payload);
   }
 };
 //Callback to handle device time Charcterisitc events
@@ -146,8 +147,8 @@ class DeviceTimeCallback: public BLECharacteristicCallbacks {
     std::string str = pCharacteristic->getValue(); //read values
     memset(payload, '\0', sizeof(payload));
     strcpy(payload, str.c_str());
-    tft.writeText(payload,20);
-    //tft.writeText(payload);
+    tft->writeText(payload,20);
+    //tft->writeText(payload);
   }
 };
 //Callback to handle device time Charcterisitc events
@@ -156,8 +157,8 @@ class DeviceBatteryCallback: public BLECharacteristicCallbacks {
     std::string str = pCharacteristic->getValue(); //read values
     memset(payload, '\0', sizeof(payload));
     strcpy(payload, str.c_str());
-    tft.writeText(payload);
-    //tft.writeText(payload);
+    tft->writeText(payload);
+    //tft->writeText(payload);
   }
 };
 
@@ -173,14 +174,14 @@ class MyServerCallback: public BLEServerCallbacks {
     hasText = false;
     hasTimeText = false;
     yScrollPos = 0;
-    tft.writeText("connected");
+    tft->writeText("connected");
   }
 
   void onDisconnect(BLEServer* pServer) {
     // todo display `disconnected` on the screen
     Serial.println("BLE onDisconnect");
     connected = false;
-    tft.writeText("disconneted");
+    tft->writeText("disconneted");
   }
 };
 
@@ -251,19 +252,19 @@ void setup() {
   Serial.println();
   Serial.println("hello");
 
-  tft.initR(INITR_GREENTAB);   // initialize a ST7735S chip, black tab
-  tft.initR(INITR_BLACKTAB);
+  tft->initR(INITR_GREENTAB);   // initialize a ST7735S chip, black tab
+  tft->initR(INITR_BLACKTAB);
 
-  tft.fillScreen(ST77XX_WHITE);
+  tft->fillScreen(ST77XX_WHITE);
 
-  tft.drawRGBBitmap(14,30,splash,100,100);
+  tft->drawRGBBitmap(14,30,splash,100,100);
   //init BLE server
   setupBLEServer();
   delay(5000);
 
-  tft.drawRGBBitmap(14,30,blutooth_splash,100,100);
+  tft->drawRGBBitmap(14,30,blutooth_splash,100,100);
   
-  //tft.fillScreen(ST77XX_BLACK);
+  //tft->fillScreen(ST77XX_BLACK);
   delay(5000);
 }
 void loop() {

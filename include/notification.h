@@ -11,11 +11,11 @@ class Notification{
         char* selfDisplayName;
         char* infoText;
         //MapsNotification* map;
-        Display disp;
+        Display* disp;
 
-        //Notification(Display);
+        Notification(Display* );
 
-        // void setDisplay(Display);
+        void setDisplay(Display *);
 
         void setCode(int);
         int getCode();

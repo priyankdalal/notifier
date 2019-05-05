@@ -1,8 +1,11 @@
 #include<notification.h>
 
-// void Notification::setDisplay(Display d){
-//     disp=d;
-// }
+Notification::Notification(Display* d){
+    disp=d;
+}
+void Notification::setDisplay(Display* d){
+    disp=d;
+}
 void Notification::setCode(int c){
     code=c;
 };
@@ -55,7 +58,7 @@ char* Notification::getInfoText(){
 
 void Notification::processNotification(){
     if(getCode()==5){
-        MapsNotification mapNotification;
+        MapsNotification* mapNotification;
         if(strlen(subText)>0){
             char *found;
             char* eta;
@@ -83,9 +86,11 @@ void Notification::processNotification(){
                 }
                 count++;
             }
-            mapNotification.setEta(eta);
-            mapNotification.setDistanceRemaining(distance);
-            mapNotification.setTimeToEta(eta2);
+            mapNotification->setEta(eta);
+            mapNotification->setDistanceRemaining(distance);
+            mapNotification->setTimeToEta(eta2);
+            disp->fillRect(0,120,128,20,ST7735_BLACK);
+            disp->writeText(mapNotification->getEta(),120);
         }
     }
 };
